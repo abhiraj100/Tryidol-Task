@@ -1,34 +1,33 @@
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate ,Link} from 'react-router-dom';
 import axios from 'axios';
 import { userExists } from '../redux/slices/authSlice';
-
+import { url } from '../constants/server';
+import toast from 'react-hot-toast';
 
 const Login = () => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const handleSubmit = async (e) => {
 
-
-  const handleSubmit = async(e) => {
-    const url='http://localhost:3000'
     try {
       e.preventDefault();
       const formdata = new FormData(e.target)
       const credentials = {
-        name: formdata.get('name'),
+        email: formdata.get('email'),
         password: formdata.get('password'),
       }
-      const {data} =await axios.post('/api/auth/login', credentials,{withCredentials: true})
-      if(data.success) {
+      const { data } = await axios.post(`${url}/api/auth/login`, credentials, { withCredentials: true })
+      if (data.success) {
         dispatch(userExists(data?.user))
-
+        toast.success("Welcome User!")
         navigate('/');
       }
     } catch (err) {
-      console.error(err.response?.data?.message)
+      console.error(err.response?.data?.message || err.message || "Opps something went wrong")
     }
   };
 
@@ -69,6 +68,7 @@ const Login = () => {
             Login
           </button>
         </form>
+        <p>Create a new account ? <Link to='/register'>Sign Up</Link></p>
       </div>
     </div>
   );

@@ -1,0 +1,1 @@
+export const url= import.meta.env.URL || "http://localhost:3000"
